@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watchEffect } from 'vue'
 import { useQuotesStore } from '../stores/quotes'
 import SideNav from '../components/SideNav.vue'
 import Header from '../components/Header.vue'
 import type { DashboardMetrics } from '../types'
+// Assuming you are using Heroicons, adjust path if necessary
+import { DocumentTextIcon, ClockIcon } from '@heroicons/vue/24/outline'
 
 const quotesStore = useQuotesStore()
 
@@ -14,20 +16,50 @@ const metrics = ref<DashboardMetrics>({
   othersUsePercentage: 0
 })
 
-onMounted(() => {
-  const quotes = quotesStore.getQuotes()
+const calculateMetrics = () => {
+  const quotes = quotesStore.quotes
+
+  if (!quotes || quotes.length === 0) {
+    metrics.value = {
+      totalQuotes: 0,
+      todayQuotes: 0,
+      personalUsePercentage: 0,
+      othersUsePercentage: 0
+    }
+    return
+  }
+
   metrics.value.totalQuotes = quotes.length
   
-  // Calculate today's quotes
   const today = new Date().toISOString().split('T')[0]
   metrics.value.todayQuotes = quotes.filter(q => 
     q.createdAt.startsWith(today)
   ).length
 
-  // Calculate usage percentages
-  const personalUse = quotes.filter(q => q.vehicleInfo.useType === 'personal').length
-  metrics.value.personalUsePercentage = (personalUse / quotes.length) * 100
-  metrics.value.othersUsePercentage = 100 - metrics.value.personalUsePercentage
+  const personalUse = quotes.filter(q => q.usage === 'personal').length // Corrected property
+  
+  if (quotes.length > 0) {
+    metrics.value.personalUsePercentage = (personalUse / quotes.length) * 100
+    metrics.value.othersUsePercentage = 100 - metrics.value.personalUsePercentage
+  } else {
+    metrics.value.personalUsePercentage = 0
+    metrics.value.othersUsePercentage = 0
+  }
+}
+
+onMounted(async () => {
+  // Fetch quotes only if they are not already loaded and not currently loading
+  if (quotesStore.quotes.length === 0 && !quotesStore.loading) {
+    await quotesStore.fetchQuotes()
+  }
+  // Initial calculation will be handled by watchEffect after data is available
+})
+
+watchEffect(() => {
+  // Recalculate metrics when quotes data changes, or after loading finishes
+  if (!quotesStore.loading && !quotesStore.error) {
+    calculateMetrics()
+  }
 })
 </script>
 

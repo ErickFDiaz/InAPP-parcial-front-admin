@@ -23,6 +23,13 @@ const router = createRouter({
       component: () => import('../views/QuotesView.vue'),
       meta: { requiresAuth: true }
     },
+    { // Add this new route
+      path: '/quotes/manage/:id',
+      name: 'ManageQuote',
+      component: () => import('../views/ManageQuoteView.vue'),
+      meta: { requiresAuth: true },
+      props: true // This allows the :id to be passed as a prop to the component
+    },
     {
       path: '/employees',
       component: () => import('../views/EmployeesView.vue'),
