@@ -6,6 +6,7 @@ import Header from '../components/Header.vue'
 import type { DashboardMetrics } from '../types'
 // Assuming you are using Heroicons, adjust path if necessary
 import { DocumentTextIcon, ClockIcon } from '@heroicons/vue/24/outline'
+import QuoteCharts from '../views/QuoteCharts.vue'
 
 const quotesStore = useQuotesStore()
 
@@ -156,6 +157,8 @@ watchEffect(() => {
             </div>
           </div>
         </div>
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
+        <QuoteCharts/></div>
       </div>
     </main>
   </SideNav>
