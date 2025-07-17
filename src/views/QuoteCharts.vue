@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Pie, Bar } from 'vue-chartjs'
+import { Doughnut, Bar } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Title,
@@ -160,9 +160,9 @@ const topBrandsData = computed(() => {
   <h2 class="text-lg font-semibold mb-4">Evolución de Cotizaciones</h2>
   <Line :data="quotesOverTimeData" />
 </div>
-<div class="bg-white grid-cols-1 p-4 rounded shadow" style="width: 150%;">
+<div class="bg-white grid-cols-1 p-4 rounded shadow" style="width: 170%; ">
       <h2 class="text-lg font-semibold mb-4">Cotizaciones por estado</h2>
-      <Pie :data="statusChartData" />
+      <Doughnut :data="statusChartData" :options="chartOptionsHorizontal"/>
     </div>
   </div>
   <div class="grid grid-cols-4 md:grid-cols-1 gap-6 mt-8">
